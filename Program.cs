@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StudentExercises
 {
@@ -152,6 +153,59 @@ namespace StudentExercises
                         }
                     }
             }
+
+            Console.WriteLine("---------------------------");
+
+            //Begin Student Exercise 2
+
+            // List exercises for the JavaScript language by using the Where() LINQ method.
+            IEnumerable<Exercise> JSExercises = exercises.Where(e => e.Language == "JavaScript");
+            Console.WriteLine("#1");
+            Console.WriteLine("JS Exercises:");
+            foreach(Exercise exercise in JSExercises)
+            {
+                Console.WriteLine(exercise.Name);
+            }
+            Console.WriteLine("---------------------------");
+            
+            // List students in a particular cohort by using the Where() LINQ method.
+            IEnumerable<IGrouping<string, Student>> studentsByCohort = students.GroupBy(s => s.Cohort.Name);
+            foreach(var grouping in studentsByCohort)
+            {
+                Console.WriteLine(grouping.Key);
+                foreach(Student student in grouping)
+                {
+                    Console.WriteLine(student.FirstName);
+                }
+            }
+            Console.WriteLine("---------------------------");
+            
+            //Andy's Brain
+            IEnumerable<IGrouping<string, Student>> studentsByCohort2 = students.GroupBy(s => s.Cohort.Name);
+            foreach(var grouping in studentsByCohort2)
+            {
+                string studentsNames = string.Join(", ", grouping.Select(s => s.FirstName));
+                Console.WriteLine($"{grouping.Key}: {studentsNames}");
+            }
+
+            string AndysChallenge = "";
+            foreach(Student student in students)
+            {
+                if(student.Cohort.Name == "Day Cohort 27")
+                {
+                    AndysChallenge += student.FirstName + ", ";
+                }
+            }
+            Console.WriteLine($"Andy's CHallenge: Day Cohort 27: {AndysChallenge}");
+
+
+            // List instructors in a particular cohort by using the Where() LINQ method.
+            Console.WriteLine("---------------------------");
+
+            // Sort the students by their last name.
+            // Display any students that aren't working on any exercises (Make sure one of your student instances don't have any exercises. Create a new student if you need to.)
+            // Which student is working on the most exercises? Make sure one of your students has more exercises than the others.
+            // How many students in each cohort?
         }
     }
 }
