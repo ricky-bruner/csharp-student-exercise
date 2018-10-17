@@ -36,6 +36,7 @@ namespace StudentExercises
             Student Jordan = new Student("Jordan", "Williams", "@Jordan Williams", cohort26);
             Student Jenn = new Student("Jenn", "Lawson", "@Jenn Lawson", cohort26);
             Student Austin = new Student("Austin", "Gorman", "@Austin Gorman", cohort26);
+            Student David = new Student("David", "Taylor", "@David Taylor", cohort27);
 
             Exercise wizardOfOz = new Exercise(){
                 Name = "Wizard of Oz HTML practice",
@@ -109,6 +110,7 @@ namespace StudentExercises
 
             Andy.AssignExercise(Ricky, studentTracker);
             Andy.AssignExercise(Ricky, listPractice);
+            Andy.AssignExercise(Ricky, tryCatch);
             Andy.AssignExercise(Kayla, studentTracker);
             Andy.AssignExercise(Kayla, listPractice);
             Meg.AssignExercise(Helen, nutshellReact);
@@ -128,7 +130,7 @@ namespace StudentExercises
             Steve.AssignExercise(Brett, capStone);
 
             List<Student> students = new List<Student>(){
-                Ricky, Kayla, Helen, Alejandro, Dejan, Kelly, Sebastian, William, Brett, Jordan, Jenn, Austin
+                Ricky, Kayla, Helen, Alejandro, Dejan, Kelly, Sebastian, William, Brett, Jordan, Jenn, Austin, David
             };
 
             List<Exercise> exercises = new List<Exercise>(){
@@ -188,24 +190,54 @@ namespace StudentExercises
                 Console.WriteLine($"{grouping.Key}: {studentsNames}");
             }
 
-            string AndysChallenge = "";
-            foreach(Student student in students)
-            {
-                if(student.Cohort.Name == "Day Cohort 27")
-                {
-                    AndysChallenge += student.FirstName + ", ";
-                }
-            }
-            Console.WriteLine($"Andy's CHallenge: Day Cohort 27: {AndysChallenge}");
+            // string AndysChallenge = "";
+            // foreach(Student student in students)
+            // {
+            //     if(student.Cohort.Name == "Day Cohort 27")
+            //     {
+            //         AndysChallenge += student.FirstName + ", ";
+            //     }
+            // }
+            // Console.WriteLine($"Andy's CHallenge: Day Cohort 27: {AndysChallenge}");
 
 
             // List instructors in a particular cohort by using the Where() LINQ method.
             Console.WriteLine("---------------------------");
 
             // Sort the students by their last name.
+
+            List<Student> studentsByLastName = students.OrderBy(s => s.LastName).ToList();
+            foreach(Student student in studentsByLastName)
+            {
+                Console.WriteLine(student.LastName);
+            }
+            Console.WriteLine("---------------------------");
+
             // Display any students that aren't working on any exercises (Make sure one of your student instances don't have any exercises. Create a new student if you need to.)
+
+            List<Student> lameStudents = students.Where(s => s.Exercises.Count == 0).ToList();
+            foreach(Student student in lameStudents)
+            {
+                Console.WriteLine(student.FirstName);
+            }
+
+            Console.WriteLine("---------------------------");
+            
+            
             // Which student is working on the most exercises? Make sure one of your students has more exercises than the others.
+
+            string overAcheiver = students.OrderByDescending(s => s.Exercises.Count).Take(1).Select(s => s.FirstName).First().ToString();
+            Console.WriteLine(overAcheiver);
+          
+            Console.WriteLine("---------------------------");
+
             // How many students in each cohort?
+
+            var studentsInCohort = students.GroupBy(s => s.Cohort.Name);
+            foreach(var grouping in studentsInCohort)
+            {
+                Console.WriteLine($"{grouping.Key} has {grouping.Count()} students.");
+            }
         }
     }
 }
