@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Dapper;
+using Microsoft.Data.Sqlite;
 
 namespace StudentExercises
 {
@@ -9,13 +11,13 @@ namespace StudentExercises
         static void Main(string[] args)
         {
             Cohort cohort26 = new Cohort();
-            cohort26.Name = "Day Cohort 26";
+            cohort26.CohortName = "Day Cohort 26";
             
             Cohort cohort27 = new Cohort();
-            cohort27.Name = "Day Cohort 27";
+            cohort27.CohortName = "Day Cohort 27";
             
             Cohort cohort28 = new Cohort();
-            cohort28.Name = "Day Cohort 28";
+            cohort28.CohortName = "Day Cohort 28";
             
             Instructor Steve = new Instructor("Steve", "Brownlee", "@coach", cohort27);
             Instructor Meg = new Instructor("Meg", "Ducharme", "@megducharme", cohort27);
@@ -40,72 +42,72 @@ namespace StudentExercises
 
             Exercise wizardOfOz = new Exercise(){
                 Name = "Wizard of Oz HTML practice",
-                Language = "HTML and CSS"
+                ExerciseLanguage = "HTML and CSS"
             };
             
             Exercise chickenMonkey = new Exercise(){
                 Name = "Chicken Monkey",
-                Language = "JavaScript"
+                ExerciseLanguage = "JavaScript"
             };
 
             Exercise fizzBuzz = new Exercise(){
                 Name = "Fizz Buzz",
-                Language = "JavaScript"
+                ExerciseLanguage = "JavaScript"
             };
 
             Exercise loops = new Exercise(){
                 Name = "Loops Practice",
-                Language = "JavaScript"
+                ExerciseLanguage = "JavaScript"
             };
 
             Exercise arrayMethods = new Exercise(){
                 Name = "Array Method Practice",
-                Language = "JavaScript"
+                ExerciseLanguage = "JavaScript"
             };
 
             Exercise NSSIA = new Exercise(){
                 Name = "N.S.S.I.A.",
-                Language = "JavaScript"
+                ExerciseLanguage = "JavaScript"
             };
 
             Exercise dailyJournal = new Exercise(){
                 Name = "Daily Journal",
-                Language = "JaveScript"
+                ExerciseLanguage = "JaveScript"
             };
 
             Exercise nutshellJS = new Exercise(){
                 Name = "Nutshell JS",
-                Language = "JavaScript"
+                ExerciseLanguage = "JavaScript"
             };
 
             Exercise kennel = new Exercise(){
                 Name = "Kennel React",
-                Language = "React.js"
+                ExerciseLanguage = "React.js"
             };
 
             Exercise nutshellReact = new Exercise(){
                 Name = "Nutshell React",
-                Language = "React.js"
+                ExerciseLanguage = "React.js"
             };
 
             Exercise listPractice = new Exercise(){
                 Name = "C# List Practice",
-                Language = "C#"
+                ExerciseLanguage = "C#"
             };
 
             Exercise tryCatch = new Exercise(){
                 Name = "Try and Catch Practice",
-                Language = "C#"
+                ExerciseLanguage = "C#"
             };
 
             Exercise studentTracker = new Exercise(){
                 Name = "Student Tracker",
-                Language = "C#"
+                ExerciseLanguage = "C#"
             };
 
             Exercise capStone = new Exercise(){
                 Name = "Final CapStone",
-                Language = "C#"
+                ExerciseLanguage = "C#"
             };
 
             Andy.AssignExercise(Ricky, studentTracker);
@@ -160,8 +162,8 @@ namespace StudentExercises
 
             //Begin Student Exercise 2
 
-            // List exercises for the JavaScript language by using the Where() LINQ method.
-            IEnumerable<Exercise> JSExercises = exercises.Where(e => e.Language == "JavaScript");
+            // List exercises for the JavaScript ExerciseLanguage by using the Where() LINQ method.
+            IEnumerable<Exercise> JSExercises = exercises.Where(e => e.ExerciseLanguage == "JavaScript");
             Console.WriteLine("#1");
             Console.WriteLine("JS Exercises:");
             foreach(Exercise exercise in JSExercises)
@@ -171,7 +173,7 @@ namespace StudentExercises
             Console.WriteLine("---------------------------");
             
             // List students in a particular cohort by using the Where() LINQ method.
-            IEnumerable<IGrouping<string, Student>> studentsByCohort = students.GroupBy(s => s.Cohort.Name);
+            IEnumerable<IGrouping<string, Student>> studentsByCohort = students.GroupBy(s => s.Cohort.CohortName);
             foreach(var grouping in studentsByCohort)
             {
                 Console.WriteLine(grouping.Key);
@@ -183,7 +185,7 @@ namespace StudentExercises
             Console.WriteLine("---------------------------");
             
             //Andy's Brain
-            IEnumerable<IGrouping<string, Student>> studentsByCohort2 = students.GroupBy(s => s.Cohort.Name);
+            IEnumerable<IGrouping<string, Student>> studentsByCohort2 = students.GroupBy(s => s.Cohort.CohortName);
             foreach(var grouping in studentsByCohort2)
             {
                 string studentsNames = string.Join(", ", grouping.Select(s => s.FirstName));
@@ -233,11 +235,164 @@ namespace StudentExercises
 
             // How many students in each cohort?
 
-            var studentsInCohort = students.GroupBy(s => s.Cohort.Name);
-            foreach(var grouping in studentsInCohort)
+            IEnumerable<IGrouping<string, Student>> studentsInCohort = students.GroupBy(s => s.Cohort.CohortName);
+            foreach(IGrouping<string, Student> grouping in studentsInCohort)
             {
                 Console.WriteLine($"{grouping.Key} has {grouping.Count()} students.");
             }
+
+            Console.WriteLine("---------------------------");
+
+            Console.WriteLine("-------------Begin Exercise 4--------------");
+            // 1. Add packages for Dapper and Sqlite to your Student Exercises project
+            // dotnet add package Dapper
+            // dotnet add package Microsoft.Data.Sqlite
+            // dotnet restore
+                    //DONE
+            
+            // 2. Create a DatabaseInterface class to interact with your StudentExercises.db database.
+                    //DONE
+
+            // 3. Query the database for all the Exercises.
+
+            SqliteConnection db = DatabaseInterface.Connection;
+
+            List<Exercise> queryExercises = db.Query<Exercise>(@"SELECT * FROM Exercise").ToList();
+
+            foreach(Exercise exercise in queryExercises)
+            {
+                Console.WriteLine($"{exercise.Name}, in {exercise.ExerciseLanguage}.");
+            }
+
+            Console.WriteLine("---------------------------");
+            // 4. Find all the exercises in the database where the language is JavaScript.
+
+            List<Exercise> JavaScriptExercises = db.Query<Exercise>(@"
+                    SELECT * FROM Exercise
+                    WHERE Exercise.ExerciseLanguage == 'JavaScript'
+            ").ToList();
+
+            foreach(Exercise exercise in JavaScriptExercises)
+            {
+                Console.WriteLine($"{exercise.Name}, in {exercise.ExerciseLanguage}.");
+            }
+
+            Console.WriteLine("---------------------------");
+            // Insert a new exercise into the database.
+
+            // db.Execute(@"
+            //     INSERT INTO Exercise
+            //     (Name, ExerciseLanguage)
+            //     VALUES
+            //     ('SQL Practice', 'SQLite')
+            // ");
+
+            List<Exercise> checkForAddedExercise = db.Query<Exercise>(@"SELECT * FROM Exercise").ToList();
+
+            foreach(Exercise exercise in checkForAddedExercise)
+            {
+                Console.WriteLine($"{exercise.Name}, in {exercise.ExerciseLanguage}");
+            }
+
+            Console.WriteLine("---------------------------");
+            // Find all instructors in the database. Include each instructor's cohort.
+
+            List<Instructor> queryInstructors = db.Query<Instructor, Cohort, Instructor>(@"
+                SELECT  i.Id,
+                        i.FirstName,
+                        i.LastName,
+                        i.SlackHandle,
+                        c.Id,
+                        c.CohortName
+                FROM Instructor i
+                JOIN Cohort c ON c.Id = i.CohortId
+            ", (instructor, cohort) => {
+                instructor.Cohort = cohort;
+                return instructor;
+            }).ToList();
+
+            foreach(Instructor instructor in queryInstructors)
+            {
+                Console.WriteLine($"{instructor.FirstName} {instructor.LastName}, with the slack handle {instructor.SlackHandle}, is currently teaching in {instructor.Cohort.CohortName}");
+            }
+
+            Console.WriteLine("---------------------------");
+
+            // Insert a new instructor into the database. Assign the instructor to an existing cohort.
+
+            // db.Execute(@"
+            //     INSERT INTO Instructor
+            //     SELECT NULL, 'Jordan', 'Castello', '@Jordan Castello', Cohort.Id
+            //     FROM Cohort
+            //     WHERE Cohort.CohortName = 'Day Cohort 26'
+            // ");
+
+            List<Instructor> newQInstructors = db.Query<Instructor, Cohort, Instructor>(@"
+                SELECT  i.Id,
+                        i.FirstName,
+                        i.LastName,
+                        i.SlackHandle,
+                        c.Id,
+                        c.CohortName
+                FROM Instructor i
+                JOIN Cohort c ON c.Id = i.CohortId
+            ", (instructor, cohort) => {
+                instructor.Cohort = cohort;
+                return instructor;
+            }).ToList();
+
+            foreach(Instructor i in newQInstructors)
+            {
+                Console.WriteLine($"{i.FirstName}, in {i.Cohort.CohortName}");
+            }
+
+            Console.WriteLine("---------------------------");
+
+            // Assign an existing exercise to an existing student.
+
+            // db.Execute(@"
+            //     INSERT INTO StudentExercise
+            //     SELECT NULL, s.Id, e.Id
+            //     FROM Student s, Exercise e
+            //     WHERE s.FirstName = 'David'
+            //     AND e.Name = 'SQL Practice'
+            // ");
+
+
+            // Challenge - Find all the students in the database. Include each student's cohort AND each student's list of exercises.
+
+            Dictionary<int, Student> sAndE = new Dictionary<int, Student>();
+
+            IEnumerable<Student> completeStudents = db.Query<Student, Cohort, Exercise, Student>(@"
+                SELECT  s.Id,
+                        s.FirstName,
+                        s.LastName,
+                        s.SlackHandle,
+                        c.Id,
+                        c.CohortName,
+                        e.Id,
+                        e.Name,
+                        e.ExerciseLanguage
+                FROM Student s
+                JOIN Cohort c ON c.Id = s.CohortId
+                JOIN StudentExercise se ON se.StudentId = s.Id
+                JOIN Exercise e ON se.ExerciseId = e.Id
+            ", (student, cohort, exercise) => {
+                student.Cohort = cohort;
+                if(!sAndE.ContainsKey(student.Id)){
+                    sAndE[student.Id] = student;
+                }
+                sAndE[student.Id].Exercises.Add(exercise);
+                return student;
+            });
+
+            foreach(KeyValuePair<int, Student> student in sAndE)
+            {
+                string exerciseList = string.Join(", ", student.Value.Exercises.Select(e => e.Name));
+                Console.WriteLine($"{student.Value.FirstName} {student.Value.LastName} from {student.Value.Cohort.CohortName} is working on these exercises: {exerciseList}");
+            }
+
+            Console.WriteLine("---------------------------");
         }
     }
 }

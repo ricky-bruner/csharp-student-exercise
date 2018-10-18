@@ -2,6 +2,7 @@ namespace StudentExercises
 {
     class Instructor
     {
+        // public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string SlackHandle { get; set; }
@@ -14,6 +15,8 @@ namespace StudentExercises
             SlackHandle = slack;
             Cohort = cohort;
         }
+
+        public Instructor (){}
         public void AssignExercise(Student student, Exercise exercise)
         {
             student.Exercises.Add(exercise);
